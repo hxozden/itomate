@@ -175,7 +175,7 @@ async def activate(connection):
         if partial_profile.name == profile_name:
             # Change the current session's profile.
             full_profile = await partial_profile.async_get_full_profile()
-            await curr_tab.current_session.async_set_profile(full)
+            await curr_tab.current_session.async_set_profile(full_profile)
 
     # Render all the required tabs and execute the commands
     for counter, tab_id in enumerate(config['tabs']):
