@@ -157,7 +157,7 @@ async def activate(connection):
     if args.get('version'):
         print(version)
         return
-    
+
     config_path = args.get('config') if args.get('config') is not None else default_config
     config = read_config(config_path)
 
@@ -167,15 +167,15 @@ async def activate(connection):
     app = await iterm2.async_get_app(connection, True)
     initial_win = await get_current_window(app, connection, args.get('new'), profile_name)
     curr_tab = initial_win.current_tab
-    
+
     #Getting list of profiles in order to set current session's profile
     partial_profile_list = await iterm2.PartialProfile.async_query(connection)
-    # Iterate over each partial profile
-    for partial_profile in partial_profile_list:
-        if partial_profile.name == profile_name:
-            # Change the current session's profile.
-            full_profile = await partial_profile.async_get_full_profile()
-            await curr_tab.current_session.async_set_profile(full_profile)
+    # # Iterate over each partial profile
+    # for partial_profile in partial_profile_list:
+    #     if partial_profile.name == profile_name:
+    #         # Change the current session's profile.
+    #         full_profile = await partial_profile.async_get_full_profile()
+    #         await curr_tab.current_session.async_set_profile(full_profile)
 
     # Render all the required tabs and execute the commands
     for counter, tab_id in enumerate(config['tabs']):
@@ -183,6 +183,14 @@ async def activate(connection):
         # we have the current tab where the command was run
         if counter != 0:
             curr_tab = await initial_win.async_create_tab()
+
+        # Iterate over each partial profile
+        for partial_profile in partial_profile_list:
+            if partial_profile.name == profile_name:
+                # Change the current session's profile.
+                full_profile = await partial_profile.async_get_full_profile()
+                await curr_tab.current_session.async_set_profile(full_profile)
+                break
 
         tab_config = config['tabs'][tab_id]
         root_path = tab_config.get('root')
