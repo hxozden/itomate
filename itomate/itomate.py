@@ -30,7 +30,7 @@ def read_config(config_path, tag='!ENV'):
         raise ItomateException(f"Config file does not exist at {config_path}")
 
     # REGEX for ${word}
-    tag_regex = re.compile('.*?\${(\w+)}.*?')
+    tag_regex = re.compile('.*?\\${(\\w+)}.*?')
 
     # The FullLoader parameter handles the conversion from YAML
     # scalar values to Python the dictionary format
