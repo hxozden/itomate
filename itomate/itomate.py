@@ -72,6 +72,36 @@ async def render_tab_panes(tab, panes, pofile_name):
         # we have the currently opened empty session already
         if vertical_pane_counter != 1:
             current_session = await current_session.async_split_pane(vertical=True, profile=pofile_name)
+        # else:
+            # # Get the current app instance
+            # app = await iterm2.async_get_app(connection)
+            #
+            # # Get the currently active window
+            # current_window = app.current_terminal_window
+            # if not current_window:
+            #     print("No active window found.")
+            #     continue
+            #
+            # # Get the currently active tab in that window
+            # active_tab = current_window.current_tab
+            # if not active_tab:
+            #     print("No active tab found.")
+            #     continue
+            #
+            # # A tab contains panes (sessions). We want the active session in this tab.
+            # active_session = active_tab.current_session
+            # if not active_session:
+            #     print("No active session found in the current tab.")
+            #     continue
+            # Create a profile change request
+            # profile_changes = iterm2.LocalWriteOnlyProfile()
+            #
+            # # Set the Name property to your target profile.
+            # # iTerm2 will pull the rest of the settings from this existing profile.
+            # profile_changes.set_name(pofile_name)
+            #
+            # # Apply the changes specifically to the active session
+            # await current_session.async_set_profile_properties(profile_changes)
 
         if pane.get('badge'):
                 await add_badge(current_session, pane.get('badge'))
@@ -170,12 +200,14 @@ async def activate(connection):
 
     #Getting list of profiles in order to set current session's profile
     partial_profile_list = await iterm2.PartialProfile.async_query(connection)
-    # # Iterate over each partial profile
-    # for partial_profile in partial_profile_list:
-    #     if partial_profile.name == profile_name:
-    #         # Change the current session's profile.
-    #         full_profile = await partial_profile.async_get_full_profile()
-    #         await curr_tab.current_session.async_set_profile(full_profile)
+    #Iterate over each partial profile
+    for partial_profile in partial_profile_list:
+        #print("Profile_name: ",partial_profile.name)
+        if partial_profile.name == profile_name:
+            # Change the current session's profile.
+            await curr_tab.current_session.async_set_profile(partial_profile)
+            #full_profile = await partial_profile.async_get_full_profile()
+            #await curr_tab.current_session.async_set_profile(full_profile)
 
     # Render all the required tabs and execute the commands
     for counter, tab_id in enumerate(config['tabs']):
@@ -183,14 +215,6 @@ async def activate(connection):
         # we have the current tab where the command was run
         if counter != 0:
             curr_tab = await initial_win.async_create_tab()
-
-        # Iterate over each partial profile
-        for partial_profile in partial_profile_list:
-            if partial_profile.name == profile_name:
-                # Change the current session's profile.
-                full_profile = await partial_profile.async_get_full_profile()
-                await curr_tab.current_session.async_set_profile(full_profile)
-                break
 
         tab_config = config['tabs'][tab_id]
         root_path = tab_config.get('root')

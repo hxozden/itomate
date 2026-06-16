@@ -18,11 +18,10 @@ setuptools.setup(
     install_requires=[
         "iterm2>=1.1",
         "PyYAML>=5.3.1",
-
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: MIT AND (Apache-2.0 OR BSD-2-Clause)",
         "Operating System :: MacOS",
     ],
     python_requires='>=3.7.0',
